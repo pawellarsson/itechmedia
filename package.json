@@ -1,13 +1,13 @@
 {
-  "name": "gulp-boilerplate",
-  "version": "1.1.0",
-  "description": "Gulp boilerplate with browserify and sass",
+  "name": "itech-test",
+  "version": "1.0.0",
+  "description": "iTech test",
   "main": "main.js",
   "scripts": {
     "start": "gulp"
   },
-  "author": "Jesper Orb",
-  "license": "ISC",
+  "author": "PAwel",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.1.6",
     "autoprefixer": "^9.3.1",
