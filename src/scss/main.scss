@@ -11,7 +11,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: #fff;
+	background-color: $textcolor;
 	color: #000;
 	font: 100%/1.5 'Source Sans Pro', sans-serif;
 }
@@ -26,17 +26,23 @@ body {
 	height: auto;
 	font-size: 1.5em;
 
-	.top .screen {
+	.top {
 		height: 120px;
-		width: 100%;
-		float: right;
 		padding: 0 10px;
 		background: #29363b;
 		font-size: 17px;
 		line-height: 40px;
-		color: white;
+		color: $textcolor;
 		text-align: right;
 		letter-spacing: 1px;
+
+		.history {
+			color: #788083;
+		}
+
+		.screen {
+			font-size: 3em;
+		}
 	}
 
 	.keys,
@@ -49,8 +55,9 @@ body {
 		cursor: pointer;
 		width: 56px;
 		height: 56px;
-		background: $keys;
-		color: #fff;
+		background: $keysbg;
+		color: $textcolor;
+		border-bottom: 1px solid #c96a63;
 		line-height: 36px;
 		text-align: center;
 		transition: all .2s ease;
@@ -59,13 +66,22 @@ body {
 		justify-content: center;
 
 		&:hover {
-			background: darken($keys, 10%);
+			background: darken($keysbg, 10%);
+		}
+
+		&.empty {
+			cursor: default;
+
+			&:hover {
+				background: $keysbg;
+			}
 		}
 
 		&.operator,
 		&.eval {
 			margin-right: 0;
 			background: $operator;
+			border-bottom: 1px solid #c7966c;
 
 			&:hover {
 				background: darken($operator, 10%);
@@ -79,6 +95,7 @@ body {
 		&.clear,
 		&.save {
 			background: $special;
+			border-bottom: 1px solid #c96a63;
 
 			&:hover {
 				background: darken($special, 10%);

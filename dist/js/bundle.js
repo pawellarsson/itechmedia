@@ -1,5 +1,86 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
-},{}]},{},[1])
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm5vZGVfbW9kdWxlcy9icm93c2VyLXBhY2svX3ByZWx1ZGUuanMiLCJzcmMvanMvbWFpbi5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtBQ0FBO0FBQ0EiLCJmaWxlIjoiZ2VuZXJhdGVkLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXNDb250ZW50IjpbIihmdW5jdGlvbigpe2Z1bmN0aW9uIHIoZSxuLHQpe2Z1bmN0aW9uIG8oaSxmKXtpZighbltpXSl7aWYoIWVbaV0pe3ZhciBjPVwiZnVuY3Rpb25cIj09dHlwZW9mIHJlcXVpcmUmJnJlcXVpcmU7aWYoIWYmJmMpcmV0dXJuIGMoaSwhMCk7aWYodSlyZXR1cm4gdShpLCEwKTt2YXIgYT1uZXcgRXJyb3IoXCJDYW5ub3QgZmluZCBtb2R1bGUgJ1wiK2krXCInXCIpO3Rocm93IGEuY29kZT1cIk1PRFVMRV9OT1RfRk9VTkRcIixhfXZhciBwPW5baV09e2V4cG9ydHM6e319O2VbaV1bMF0uY2FsbChwLmV4cG9ydHMsZnVuY3Rpb24ocil7dmFyIG49ZVtpXVsxXVtyXTtyZXR1cm4gbyhufHxyKX0scCxwLmV4cG9ydHMscixlLG4sdCl9cmV0dXJuIG5baV0uZXhwb3J0c31mb3IodmFyIHU9XCJmdW5jdGlvblwiPT10eXBlb2YgcmVxdWlyZSYmcmVxdWlyZSxpPTA7aTx0Lmxlbmd0aDtpKyspbyh0W2ldKTtyZXR1cm4gb31yZXR1cm4gcn0pKCkiLCJcInVzZSBzdHJpY3RcIjtcbi8vIyBzb3VyY2VNYXBwaW5nVVJMPWRhdGE6YXBwbGljYXRpb24vanNvbjtjaGFyc2V0PXV0Zi04O2Jhc2U2NCxleUoyWlhKemFXOXVJam96TENKemIzVnlZMlZ6SWpwYlhTd2libUZ0WlhNaU9sdGRMQ0p0WVhCd2FXNW5jeUk2SWlJc0luTnZkWEpqWlhORGIyNTBaVzUwSWpwYlhYMD0iXX0=
+var keys = document.querySelectorAll('#calculator span:not(.empty)');
+var op = ['+', '-', 'x', '÷'];
+var decAdded = false;
+var screen = document.querySelector('.screen');
+var history = document.querySelector('.history');
+var url = ''; // URL for API call
+
+init();
+
+function init() {
+  for (var i = 0; i < keys.length; i++) {
+    keys[i].onclick = function (e) {
+      e.preventDefault();
+      var input = history.innerHTML;
+      var btnVal = this.innerHTML;
+      var lChar = input[input.length - 1];
+
+      if (btnVal === 'AC') {
+        reset();
+      } else if (btnVal === 'SAVE') {
+        callPhp(screen.innerHTML);
+      } else if (btnVal === '=') {
+        evaluate(input, lChar);
+      } else if (op.indexOf(btnVal) > -1) {
+        calculate(input, btnVal, lChar);
+      } else if (btnVal === '.') {
+        if (!decAdded) {
+          history.innerHTML += btnVal;
+          decAdded = true;
+        }
+      } else {
+        history.innerHTML += btnVal;
+      }
+    };
+  }
+}
+
+function reset() {
+  screen.innerHTML = '';
+  history.innerHTML = '';
+  decAdded = false;
+} // Bit confused here, should it be API call or just a file on PC
+// if file, PHP won't work without a server
+// if API, don't know how to make APIs in PHP
+
+
+function callPhp(result) {
+  fetch(url, {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(result)
+  }).then(function (res) {
+    return res.json();
+  }).then(function (resJson) {
+    return screen.innerHTML = 'Saved';
+  }).catch(function (err) {
+    return console.log(err);
+  });
+}
+
+function evaluate(val, lChar) {
+  var eq = val;
+  history.innerHTML = eq + '=';
+  eq = eq.replace(/x/g, '*').replace(/÷/g, '/');
+  if (op.indexOf(lChar) > -1 || lChar === '.') eq = eq.replace(/.$/, ''); // remove operators and decimal from end
+
+  if (eq) screen.innerHTML = eval(eq).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // add comma
+
+  decAdded = false;
+}
+
+function calculate(val, btn, lChar) {
+  if (val !== '' && op.indexOf(lChar) === -1) history.innerHTML += btn; // if val not empty and operators not in end add operators
+  else if (val === '' && btn === '-') history.innerHTML += btn; // if val empty and btn minus add -
+
+  if (op.indexOf(lChar) > -1 && val.length > 1) history.innerHTML = val.replace(/.$/, btn);
+  decAdded = false;
+}
+
+},{}]},{},[1]);

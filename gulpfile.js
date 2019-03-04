@@ -42,9 +42,9 @@ gulp.task('sass', () => {
 gulp.task('babel', function() {
     browserify({
         entries: './src/js/main.js',
-        debug: true
+        debug: false
     })
-    .transform(babelify, { presets: ['env'] })
+    .transform(babelify, { presets: ['@babel/preset-env'] })
     .on('error',gutil.log)
     .bundle()
     .on('error',gutil.log)
